@@ -28,17 +28,13 @@ let max = temperatures[0];
 let min = temperatures[0];
 const calcTempAmplitude = function (temps) {
   for (let i = 0; i < temperatures.length; i++) {
-    console.log(i, typeof temperatures[i], temperatures[i]);
+    // console.log(i, typeof temperatures[i], temperatures[i]);
     if (typeof temperatures[i] === "string") {
       console.log("string!");
       continue;
     } else {
-      if (temperatures[i] > max) {
-        max = temperatures[i];
-      }
-      if (temperatures[i] < min) {
-        min = temperatures[i];
-      }
+      if (temperatures[i] > max) max = temperatures[i];
+      if (temperatures[i] < min) min = temperatures[i];
     }
   }
   console.log(max, min);
