@@ -78,3 +78,28 @@ const calcTempAmplitude = function (temps1, temps2) {
 };
 
 console.log(calcTempAmplitude(temps1, temps2));
+
+// Coding Challenge
+
+// 1. Understanding the problem
+// Create a function that will accept an array to an 'arr' parameter.
+// How to print unknown number of values? - use for loop and loop over the length of the array
+// How to print the a string containing the forecast? - concatenate those values to one string
+// How to change the content of a forecast based on temperature value? use a string literal (template string) - `text`
+
+// 2. Breaking up into sub problems
+// Create an empty string to which a new string literal will be added on each iteration.
+// How to concatenate each new string to the existing one?
+// - use var1.concat(var2) method
+// - use var += var2
+
+const printForecast = function (arr) {
+  let forecast = ``;
+  for (let i = 0; i < arr.length; i++) {
+    forecast += `${arr[i]}°C in 1 days ... `;
+  }
+  return forecast;
+};
+
+console.log(printForecast([17, 21, 23]));
+console.log(printForecast([12, 5, -5, 0, 4]));
