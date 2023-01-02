@@ -79,30 +79,7 @@ const helloWorld = "hello world";
 
 // console.log(calcTempAmplitude(temps1, temps2));
 
-// Coding Challenge
-
-// 1. Understanding the problem
-// Create a function that will accept an array to an 'arr' parameter.
-// How to print unknown number of values? - use for loop and loop over the length of the array
-// How to print the a string containing the forecast? - concatenate those values to one string
-// How to change the content of a forecast based on temperature value? use a string literal (template string) - `text`
-
-// 2. Breaking up into sub problems
-// Create an empty string to which a new string literal will be added on each iteration.
-// How to concatenate each new string to the existing one?
-// - use var1.concat(var2) method
-// - use var += var2
-
-// const printForecast = function (arr) {
-//   let forecast = ``;
-//   for (let i = 0; i < arr.length; i++) {
-//     forecast += `${arr[i]}°C in 1 days ... `;
-//   }
-//   return forecast;
-// };
-
-// console.log(printForecast([17, 21, 23]));
-// console.log(printForecast([12, 5, -5, 0, 4]));
+// Debugging with the console
 
 // const measureKelvin = function () {
 //   const measurement = {
@@ -148,26 +125,64 @@ const helloWorld = "hello world";
 // Using debugger.
 // Let's introduce bigger bug using the amplitude function we created earlier.
 
-const temps1 = [3, -2, -6, -1, "error", 9, 13, 17, "error", 15, 14, 9, 5];
-const temps2 = [12, -10, -4, -1, "error", 10, "error", 22, 34, "error", 2, 4];
+// const calcTempAmplitudeBug = function (temps1, temps2) {
+//   const concatArray = temps1.concat(temps2);
+//   // Declaring a max and min variable with 0 value introduces a bug.
+//   // What will happen if the lowest temperature in both arrays is higher than 0?
+//   // It will output 0 as the lowest temperature, even if it doesn't exist in the arrays.
+//   let max = 0;
+//   let min = 0;
+//   for (let i = 0; i < concatArray.length; i++) {
+//     const currentTemp = concatArray[i];
+//     // console.log(i, typeof concatArray[i], concatArray[i]);
+//     if (typeof currentTemp === "number") {
+//       // We can utilize a 'debugger' keyword to enter the debug mode and stop execution of the code at this particular line.
+//       debugger;
+//       if (currentTemp > max) max = currentTemp;
+//       debugger;
+//       if (currentTemp < min) min = currentTemp;
+//       debugger;
+//     } else {
+//       console.log("string!");
+//       continue;
+//     }
+//   }
+//   console.log(max, min);
+//   return max - min;
+// };
 
-const calcTempAmplitudeBug = function (temps1, temps2) {
-  const concatArray = temps1.concat(temps2);
-  let max = concatArray[0];
-  let min = concatArray[0];
-  for (let i = 0; i < concatArray.length; i++) {
-    const currentTemp = concatArray[i];
-    // console.log(i, typeof concatArray[i], concatArray[i]);
-    if (typeof currentTemp === "number") {
-      if (currentTemp > max) max = currentTemp;
-      if (currentTemp < min) min = currentTemp;
-    } else {
-      console.log("string!");
-      continue;
-    }
+// console.log(calcTempAmplitudeBug([2, 4, 6, 10, 20], [4, 33, 14, 18, 22]));
+
+// 1. Identify the bug
+// - The final lowest temperature's value is 0, even if it doesn't exist in arrays
+
+// 2. Find the bug.
+// - There is a declaration of 0 value to both max and min variables. The min value won't change, because the lowest value in the merged array is '2'. Once if statement is executed, 2 is bigger than 0, so the 'min' variable remains unchanged.
+
+// 3. Fix the bug + 4. Prevent the bug.
+// - assign the first merged array element to the max and min variables, so it eliminates 0 value and all values are evaluated in the if else statement
+
+// Coding Challenge
+
+// 1. Understanding the problem
+// Create a function that will accept an array to an 'arr' parameter.
+// How to print unknown number of values? - use for loop and loop over the length of the array
+// How to print the a string containing the forecast? - concatenate those values to one string
+// How to change the content of a forecast based on temperature value? use a string literal (template string) - `text`
+
+// 2. Breaking up into sub problems
+// Create an empty string to which a new string literal will be added on each iteration.
+// How to concatenate each new string to the existing one?
+// - use var1.concat(var2) method
+// - use var += var2
+
+const printForecast = function (arr) {
+  let forecast = ``;
+  for (let i = 0; i < arr.length; i++) {
+    forecast += `${arr[i]}°C in ${i + 1} days ... `;
   }
-  console.log(max, min);
-  return max - min;
+  return "... " + forecast;
 };
 
-console.log(calcTempAmplitudeBug(temps1, temps2));
+console.log(printForecast([17, 21, 23]));
+console.log(printForecast([12, 5, -5, 0, 4]));
