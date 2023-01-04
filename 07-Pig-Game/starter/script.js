@@ -1,36 +1,44 @@
 "use strict";
-// --------------------------Selectors----------------------------
-// Values
-const leftScoreSelector = document.querySelector("#score--0");
-const rightScoreSelector = document.querySelector("#score--1");
-const leftCurrentScoreSelector = document.querySelector("#current--0");
-const rightCurrentScoreSelector = document.querySelector("#current--1");
-const leftPlayer = document.querySelector("#name--0");
-const rightPlayer = document.querySelector("#name--1");
+
+// Players
+const leftPlayer = {
+  nameID: document.querySelector("#name--0"),
+  sectionSelector: document.querySelector(".player--0"),
+  scoreSelector: document.querySelector("#score--0"),
+  currentScoreSelector: document.querySelector("#current--0"),
+  score: 0,
+  currentScore: 0,
+};
+
+const rightPlayer = {
+  nameID: document.querySelector("#name--1"),
+  sectionSelector: document.querySelector(".player--1"),
+  scoreSelector: document.querySelector("#score--1"),
+  currentScoreSelector: document.querySelector("#current--1"),
+  score: 0,
+  currentScore: 0,
+};
+
 // Images
 const diceSelector = document.querySelector(".dice");
+
 // Buttons
 const btnRollDiceSelector = document.querySelector(".btn--roll");
 const btnHoldSelector = document.querySelector(".btn--hold");
 const btnNewGameSelector = document.querySelector(".btn--new");
-// Sections
-const leftSectionSelector = document.querySelector(".player--0");
-const rightSectionSelector = document.querySelector(".player--1");
-// Variables
-let leftScore = 0;
-let leftCurrentScore = 0;
 
-let rightScore = 0;
-let rightCurrentScore = 0;
+// Variables
 let diceValue;
-let rolled = false;
-let player1 = true;
+let leftSide = true;
 
 // --------------------------Functions---------------------------
 const roll = function () {
   let diceValue = Math.trunc(Math.random() * 6) + 1;
+  // Check if the game has started
   if (diceSelector.classList.contains("hidden"))
+    // If the game hasn't started, show the dice.
     diceSelector.classList.remove("hidden");
+  // Change the dice image according to the dice value.
   diceSelector.src = `dice-${diceValue}.png`;
 
   return diceValue;
@@ -50,101 +58,117 @@ const activateButtons = function () {
   btnHoldSelector.disabled = false;
 };
 
-const activatePlayer = function () {
-  if (player1 === true) {
-    player1 = false;
-    leftSectionSelector.classList.remove("player--active");
-    rightSectionSelector.classList.add("player--active");
+const switchPlayer = function (player) {
+  if (leftSide === true) {
+    // If the left side is active, switch to the right side
+    leftSide = false;
+    player.sectionSelector.classList.remove("player--active");
+    rightPlayer.sectionSelector.classList.add("player--active");
   } else {
-    player1 = true;
-    rightSectionSelector.classList.remove("player--active");
-    leftSectionSelector.classList.add("player--active");
+    // If the right side is active, switch to the left side
+    leftSide = true;
+    player.sectionSelector.classList.remove("player--active");
+    leftPlayer.sectionSelector.classList.add("player--active");
   }
 };
 
+const checkDice = function (player) {
+  if (diceValue != 1) {
+    // If dice value different from 1, add up points to the current score.
+    player.currentScore += diceValue;
+    player.currentScoreSelector.textContent = player.currentScore;
+  } else {
+    // if dice value is 1, zero the current score
+    player.currentScore = 0;
+    player.currentScoreSelector.textContent = 0;
+    // Switch player after zeroing the current score
+    switchPlayer(player);
+  }
+};
+
+const addPoints = function (player) {
+  player.score += player.currentScore;
+  player.scoreSelector.textContent = player.score;
+  player.currentScore = 0;
+  player.currentScoreSelector.textContent = player.currentScore;
+};
+
+// -------------------------Event handlers-----------------------------
 const rollDice = function () {
   diceValue = roll();
-  console.log(diceValue);
-  console.log(player1);
-  if (player1) {
-    if (diceValue != 1) {
-      leftCurrentScore += diceValue;
-      leftCurrentScoreSelector.textContent = leftCurrentScore;
-    } else {
-      leftCurrentScore = 0;
-      leftCurrentScoreSelector.textContent = 0;
-      activatePlayer();
-    }
+
+  if (leftSide) {
+    // if left side is active, pass in Player 1
+    checkDice(leftPlayer);
   } else {
-    if (diceValue != 1) {
-      rightCurrentScore += diceValue;
-      rightCurrentScoreSelector.textContent = rightCurrentScore;
-    } else {
-      rightCurrentScore = 0;
-      rightCurrentScoreSelector.textContent = 0;
-      activatePlayer();
-    }
+    // if left side isn't active, pass in Player 2
+    checkDice(rightPlayer);
   }
 };
 
 const hold = function () {
+  // When the "HOLD" button is pressed
+
+  // Check if the game has started, if not, do nothing
   if (!diceSelector.classList.contains("hidden")) {
-    if (player1) {
-      leftScore += leftCurrentScore;
-      leftScoreSelector.textContent = leftScore;
-      leftCurrentScore = 0;
-      leftCurrentScoreSelector.textContent = leftCurrentScore;
-      if (leftScore >= 100) {
-        leftPlayer.textContent = "WINNER!";
-        rightPlayer.textContent = "LOSER!";
-        leftSectionSelector.classList.add("player--winner");
+    if (leftSide) {
+      // Adding points
+      addPoints(leftPlayer);
+      // Check if player is a winner
+      if (leftPlayer.score >= 100) {
+        leftPlayer.nameID.textContent = "WINNER!";
+        rightPlayer.nameID.textContent = "LOSER!";
+        leftPlayer.sectionSelector.classList.add("player--winner");
         disableButtons();
       } else {
-        activatePlayer();
+        // Switch players if not a winner.
+        switchPlayer(leftPlayer);
       }
     } else {
-      rightScore += rightCurrentScore;
-      rightScoreSelector.textContent = rightScore;
-      rightCurrentScore = 0;
-      rightCurrentScoreSelector.textContent = rightCurrentScore;
-      if (rightScore >= 100) {
-        rightPlayer.textContent = "WINNER!";
-        leftPlayer.textContent = "LOSER!";
-        rightSectionSelector.classList.add("player--winner");
+      // Adding points
+      addPoints(rightPlayer);
+      // Check if player is a winner
+      if (rightPlayer.score >= 100) {
+        rightPlayer.nameID.textContent = "WINNER!";
+        leftPlayer.nameID.textContent = "LOSER!";
+        rightPlayer.sectionSelector.classList.add("player--winner");
         disableButtons();
       } else {
-        activatePlayer();
+        // Switch players if not a winner.
+        switchPlayer(rightPlayer);
       }
     }
   }
 };
 
 const newGame = function () {
+  // When the "NEW GAME" button is pressed
+
   // Reset players score
-
-  leftScore = 0;
-  leftScoreSelector.textContent = 0;
-  leftCurrentScoreSelector.textContent = 0;
-
-  rightScore = 0;
-  rightScoreSelector.textContent = 0;
-  rightCurrentScoreSelector.textContent = 0;
+  leftPlayer.score = 0;
+  leftPlayer.scoreSelector.textContent = 0;
+  leftPlayer.currentScoreSelector.textContent = 0;
+  rightPlayer.score = 0;
+  rightPlayer.scoreSelector.textContent = 0;
+  rightPlayer.currentScoreSelector.textContent = 0;
 
   // Select player 1 and Change the overlay to the left side if player2 was rolling a dice or won the game
+  if (leftSide) leftSide = false;
+  switchPlayer(rightPlayer);
+
+  // Change names back to the their origin state
+  leftPlayer.nameID.textContent = "Player 1";
+  rightPlayer.nameID.textContent = "Player 2";
 
   // Hide the dice
   diceSelector.classList.add("hidden");
-  // Change back to player 1
-  if (player1) player1 = false;
 
-  activatePlayer();
-  leftPlayer.textContent = "Player 1";
-  rightPlayer.textContent = "Player 2";
+  // Remove winner background
+  leftPlayer.sectionSelector.classList.contains("player--winner")
+    ? leftPlayer.sectionSelector.classList.remove("player--winner")
+    : rightPlayer.sectionSelector.classList.remove("player--winner");
 
-  leftSectionSelector.classList.contains("player--winner")
-    ? leftSectionSelector.classList.remove("player--winner")
-    : rightSectionSelector.classList.remove("player--winner");
-
+  // Activate buttons
   activateButtons();
 };
 
