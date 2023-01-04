@@ -22,14 +22,17 @@ let leftCurrentScore = 0;
 
 let rightScore = 0;
 let rightCurrentScore = 0;
-
+let diceValue;
+let rolled = false;
 let player1 = true;
 
 // --------------------------Functions---------------------------
 const roll = function () {
   let diceValue = Math.trunc(Math.random() * 6) + 1;
+  if (diceSelector.classList.contains("hidden"))
+    diceSelector.classList.remove("hidden");
   diceSelector.src = `dice-${diceValue}.png`;
-  diceSelector.classList.remove("hidden");
+
   return diceValue;
 };
 
@@ -60,10 +63,8 @@ const activatePlayer = function () {
 };
 
 const rollDice = function () {
-  let diceValue = roll();
+  diceValue = roll();
   console.log(diceValue);
-  diceSelector.src = `dice-${diceValue}.png`;
-  diceSelector.classList.remove("hidden");
   console.log(player1);
   if (player1) {
     if (diceValue != 1) {
@@ -89,41 +90,30 @@ const rollDice = function () {
 const hold = function () {
   if (!diceSelector.classList.contains("hidden")) {
     if (player1) {
+      leftScore += leftCurrentScore;
+      leftScoreSelector.textContent = leftScore;
+      leftCurrentScore = 0;
+      leftCurrentScoreSelector.textContent = leftCurrentScore;
       if (leftScore >= 100) {
         leftPlayer.textContent = "WINNER!";
         rightPlayer.textContent = "LOSER!";
         leftSectionSelector.classList.add("player--winner");
-        leftScore += leftCurrentScore;
-        leftScoreSelector.textContent = leftScore;
-        console.log(leftSectionSelector);
-        leftCurrentScore = 0;
-        leftCurrentScoreSelector.textContent = leftCurrentScore;
         disableButtons();
       } else {
-        leftScore += leftCurrentScore;
-        leftScoreSelector.textContent = leftScore;
-        leftCurrentScore = 0;
-        leftCurrentScoreSelector.textContent = leftCurrentScore;
         activatePlayer();
-        rollDice();
       }
     } else {
+      rightScore += rightCurrentScore;
+      rightScoreSelector.textContent = rightScore;
+      rightCurrentScore = 0;
+      rightCurrentScoreSelector.textContent = rightCurrentScore;
       if (rightScore >= 100) {
         rightPlayer.textContent = "WINNER!";
         leftPlayer.textContent = "LOSER!";
         rightSectionSelector.classList.add("player--winner");
-        rightScore += rightCurrentScore;
-        rightScoreSelector.textContent = rightScore;
-        rightCurrentScore = 0;
-        rightCurrentScoreSelector.textContent = rightCurrentScore;
         disableButtons();
       } else {
-        rightScore += rightCurrentScore;
-        rightScoreSelector.textContent = rightScore;
-        rightCurrentScore = 0;
-        rightCurrentScoreSelector.textContent = rightCurrentScore;
         activatePlayer();
-        rollDice();
       }
     }
   }
