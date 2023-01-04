@@ -112,7 +112,7 @@ const hold = function () {
   // Check if the game has started, if not, do nothing
   if (!diceSelector.classList.contains("hidden")) {
     if (leftSide) {
-      // Adding points
+      // Adding current points to the player's score
       addPoints(leftPlayer);
       // Check if player is a winner
       if (leftPlayer.score >= 100) {
@@ -125,7 +125,7 @@ const hold = function () {
         switchPlayer(leftPlayer);
       }
     } else {
-      // Adding points
+      // Adding current points to the player's score
       addPoints(rightPlayer);
       // Check if player is a winner
       if (rightPlayer.score >= 100) {
