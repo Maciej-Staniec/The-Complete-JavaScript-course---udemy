@@ -266,6 +266,8 @@ Therefore, "Uncaught TypeError: addExpr is not a function" is produced.
 // /* Now, because we declared the 'firstName' using the 'var' keyword, it gets created in the window object properties. That's why the output isn't 'undefined' anymore. this.firstName translates to window.firstName
 // To prevent this kind of mistakes, use other types of functions or don't declare variables with the 'var' keyword.*/
 
+// /* ---------------------- regular functions in object's methods ---------------------- */
+
 // jonas.greet();
 
 // const jonas = {
@@ -300,43 +302,103 @@ Therefore, "Uncaught TypeError: addExpr is not a function" is produced.
 // jonas.greet();
 // jonas.calcAge();
 
-const jonas = {
-  firstName: 'Jonas',
-  year: 1991,
+// /* ---------------------- solution 1 to use 'this' on regular functions ---------------------- */
 
-  calcAge: function () {
-    console.log(this);
-    console.log(2037 - this.year);
-    /*  
-    The first solution is to use a variable called 'self' (just like in python) so we can assign 'this' to it.
-    The 'isMillenial' function have access to the parent's scope, so thanks to scope chain, it gets used in the function.
-    Once we call isMillenial, a value of 'true' is printed.
-    This is a pre ES6 solution.
-    */
-    const self = this;
-    const isMillenial = function () {
-      console.log(self);
-      console.log(self.year >= 1981 && self.year <= 1996);
-    };
-    isMillenial();
+// const jonas = {
+//   firstName: 'Jonas',
+//   year: 1991,
 
-    /* Now in the ES6 we have modern and better solution. 
-    And this solution is to use an arrow function. As you already know, the arrow function has a lexical 'this' keyword, which means that it inherits a 'this' keyword from its parent scope.
-    We got the same result printed - a 'true' value.
-    */
+//   calcAge: function () {
+//     console.log(this);
+//     console.log(2037 - this.year);
+//     /*
+//     The first solution is to use a variable called 'self' (just like in python) so we can assign 'this' to it.
+//     The 'isMillenial' function have access to the parent's scope, so thanks to scope chain, it gets used in the function.
+//     Once we call isMillenial, a value of 'true' is printed.
+//     This is a pre ES6 solution.
+//     */
+//     const self = this;
+//     const isMillenial = function () {
+//       console.log(self);
+//       console.log(self.year >= 1981 && self.year <= 1996);
+//     };
+//     isMillenial();
 
-    const isAnotherMillenial = () => {
-      console.log(this);
-      console.log(this.year >= 1981 && this.year <= 1996);
-    };
-    isAnotherMillenial();
-  },
+// /* ---------------------- solution 2 to use 'this' on regular functions ---------------------- */
 
-  greet: () => {
-    console.log(`Hey ${this.firstName}`);
-    console.log(this);
-  },
+//     /* Now in the ES6 we have modern and better solution.
+//     And this solution is to use an arrow function. As you already know, the arrow function has a lexical 'this' keyword, which means it inherits a 'this' keyword from its parent scope.
+//     We got the same result printed - a 'true' value.
+//     */
+
+//     const isAnotherMillenial = () => {
+//       console.log(this);
+//       console.log(this.year >= 1981 && this.year <= 1996);
+//     };
+//     isAnotherMillenial();
+//   },
+
+//   greet: () => {
+//     console.log(`Hey ${this.firstName}`);
+//     console.log(this);
+//   },
+// };
+
+// jonas.calcAge();
+
+// /* ------------------------------- 'arguments' keyword ------------------------------- */
+
+// // It is good to know about 'arguments' keyword, but it isn't used anymore in ES6 as there is a new, modern solution of dealing with multiple parameters.
+
+// function addDecl(a, b) {
+//   console.log(arguments);
+//   return a + b;
+// }
+
+// const addExpr = function (a, b) {
+//   console.log(arguments);
+//   return a + b;
+// };
+
+// const addArrow = (a, b) => {
+//   arguments;
+//   return a + b;
+// };
+
+// console.log(addDecl, addExpr, addArrow);
+
+// // 'arguments' keyword works in both declaration and expression functions. It is an array object created once we pass in some arguments into a function. Notice, that we can pass in as many arguments as we want. We could loop over the 'arguments' to add up all values.
+// console.log(addDecl(2, 3, 4, 5));
+// console.log(addExpr(2, 3, 4, 5));
+
+// // Arrow functions don't have 'arguments' keyword.
+// console.log(addArrow(2, 3));
+
+/* --------------- Primitives vs. Objects (Primitive vs. Reference Types) --------------- */
+
+const me = {
+  fName: 'Jonas',
+  age: 30,
 };
 
-jonas.greet();
-jonas.calcAge();
+const friend = me;
+friend.age = 27;
+console.log(me.age, friend.age);
+
+me.age = 30;
+console.log(me.age, friend.age);
+
+const listOne = [1, 2, 3];
+const listTwo = listOne;
+listTwo.pop();
+console.log(listOne, listTwo);
+const listThree = [];
+
+console.log(listOne == listTwo);
+console.log(listOne === listTwo);
+
+console.log(listOne == listThree);
+console.log(listOne === listThree);
+
+console.log(listTwo == listThree);
+console.log(listTwo === listThree);
