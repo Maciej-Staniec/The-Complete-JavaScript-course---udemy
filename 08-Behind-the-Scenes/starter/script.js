@@ -374,31 +374,106 @@ Therefore, "Uncaught TypeError: addExpr is not a function" is produced.
 // // Arrow functions don't have 'arguments' keyword.
 // console.log(addArrow(2, 3));
 
-/* --------------- Primitives vs. Objects (Primitive vs. Reference Types) --------------- */
+// /* --------------- Primitives vs. Objects (Primitive vs. Reference Types) --------------- */
 
-const me = {
-  fName: 'Jonas',
-  age: 30,
+// /* ------------------------------- Primitive types (primitive values) ------------------------------- */
+
+// /* When we declare variables, their values are assigned to a particular place in the memory. The name of the variable is its ID, and the ID points to the memory address. That address holds its value in the Call Stack.
+// If we initialize a variable with an existing variable, they both will point to the same memory address. This is why age and oldAge variables logs the same value.
+//  */
+// let age = 30;
+// let oldAge = age;
+// console.log(age, oldAge);
+
+// /* Once we reinitalize the 'age' variable with a different value, a new memory address is created for its ID (the variable name), which holds the new value. This only works for primitive values. */
+// age = 31;
+// console.log(age, oldAge);
+
+// /* ------------------------------- Reference types (objects) ------------------------------- */
+
+// /*
+// When it comes to objects, assigning memory to objects works in a different way compared to primitive values. When we declare objects, the ID gets created (using the name we provided) with a memory address in the Call Stack. ID points to the that memory address. The memory address holds a value just like in primitive types. But this is where  primitive and reference types differ. The Call Stack memory address holds a reference value (location) pointing to the memory address in the HEAP, which stores declaration of the object (object literal) as a value. The HEAP is a place to store objects, because objects can get very large quickly, and HEAP ensures an almost unlimited space unlike the Call Stack.
+
+// What's more, const is supposed to be for constants, so for things that we can't change, right? However, What actually needs to be constant is the memory's address value. When we change the content of an object, what we actually change is the value in the HEAP memory. That's ok to change, it has nothing to do with const or let keywords.
+
+// ------------------------------------------- IMPORTANT! ----------------------------------------
+// In summary, the new object will copy a reference to the HEAP memory address, not the object.
+// -----------------------------------------------------------------------------------------------
+// */
+// const me = {
+//   fName: 'Jonas',
+//   age: 30,
+// };
+
+// /* If we initialize a new variable with the existing object, the ID points at the same memory address in the Call Stack. It's just another variable in the stack. The value of the memory address will point to the same HEAP memory address. It doesn't get a new memory address. That's the difference between primitive types and reference types.*/
+
+// const friend = me;
+// friend.age = 27;
+
+// console.log(me.age, friend.age);
+
+// me.age = 30;
+// console.log(me.age, friend.age);
+
+// /* This rule applies to any object.*/
+
+// const listOne = [1, 2, 3];
+// const listTwo = listOne;
+// listTwo.pop();
+// console.log(listOne, listTwo);
+// const listThree = [1, 2, 3];
+
+// console.log(listOne == listTwo); //true
+// console.log(listOne === listTwo); //true
+
+// console.log(listOne == listThree); // false
+// console.log(listOne === listThree); // false
+
+// console.log(listTwo == listThree); // false
+// console.log(listTwo === listThree); // false
+
+/* ------------------------------- Copying objects ------------------------------- */
+/* There are different ways to copy objects in JavaScript. */
+const jessica = {
+  firstName: 'Jessica',
+  lastName: 'Williams',
+  age: 27,
+  family: ['Alice', 'Bob'],
 };
 
-const friend = me;
-friend.age = 27;
-console.log(me.age, friend.age);
+/* ------------------------------- Copying with Object.assign ------------------------------- */
+// What it essentially does, it merges two objects and returns a new one.
 
-me.age = 30;
-console.log(me.age, friend.age);
+const jessicaCopy = Object.assign({}, jessica);
 
-const listOne = [1, 2, 3];
-const listTwo = listOne;
-listTwo.pop();
-console.log(listOne, listTwo);
-const listThree = [];
+console.log(jessica == jessicaCopy); // false
+console.log(jessica === jessicaCopy); // false
 
-console.log(listOne == listTwo);
-console.log(listOne === listTwo);
+jessicaCopy.lastName = 'Davis';
 
-console.log(listOne == listThree);
-console.log(listOne === listThree);
+console.log(`Before marriage: ${jessica.lastName}
+After marriage: ${jessicaCopy.lastName}`);
 
-console.log(listTwo == listThree);
-console.log(listTwo === listThree);
+/* There is one significant problem with this copying method, because it only works at the first level. In other words, if we have an object inside the object, then this inner object will actually point to the same Call Stack memory address, just like the inner object of the original object.
+That's why this method creates so-called 'shallow copy', not a deep clone, which is what we would like to get. */
+jessicaCopy.family.pop();
+console.log(jessica.family, jessicaCopy.family);
+
+// Usually, an external library called Lo-Dash is used, which we will learn in a later section
+
+const func = function (a, b) {
+  return a + b;
+};
+
+let funcCopy = func;
+console.log(func, funcCopy);
+console.log(funcCopy == func);
+console.log(funcCopy === func);
+
+funcCopy = function () {
+  console.log('funcCopy');
+};
+
+console.log(func, funcCopy);
+console.log(funcCopy == func);
+console.log(funcCopy === func);
